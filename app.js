@@ -1,8 +1,8 @@
 const express = require("express"); // Freamwork
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser"); // Middleware
 const app = express();
 
-const router = require("./routes");
+const router = require("./src/routes");
 
 app.use(bodyParser.json());
 
