@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-var jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
+const joi = require("joi");
 
 const db = require("./db");
+const { validateEmail, validateName } = require("../src/utils/validation");
 
 // welcome api
 router.get("/", (req, res) => {
@@ -14,28 +16,77 @@ router.get("/", (req, res) => {
 router.post("/api/register", async (req, res) => {
   const { name, email, phone, password } = req.query;
 
-  const salt = await bcrypt.genSaltSync(10); // Key
-  const hashPassword = await bcrypt.hashSync(password, salt);
+  try {
+    const schema = joi.object({
+      name: joi.string().required(),
+      email: joi.string().email().required(),
+      phone: joi.number().min(10).required(),
+      password: joi.string().min(8).max(20).required(),
+    });
 
-  const sqlQuery = `INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)`;
-  db.query(
-    sqlQuery,
-    [name, email, phone, hashPassword],
-    function (error, results) {
-      if (error) {
-        return res.status(500).send(error);
-      }
-
-      if (results) {
-        const respose = {
-          message: "Your account has been register successfully!",
-          status: true,
-        };
-
-        return res.json(respose);
-      }
+    const validateRespone = schema.validate({ name, email, phone, password });
+    if (validateRespone.error) {
+      return res.status(500).json({
+        status: false,
+        message: validateRespone.error.details[0].message,
+      });
     }
-  );
+
+    // const nameError = validateName(name);
+    // if (!nameError) {
+    //   const respose = {
+    //     message: "Name is required.",
+    //     status: false,
+    //   };
+    //   return res.status(401).json(respose);
+    // }
+
+    // if (name.length > 20) {
+    //   const respose = {
+    //     message: "Name length should be less then 20 char",
+    //     status: false,
+    //   };
+    //   return res.status(401).json(respose);
+    // }
+
+    // const emailError = await validateEmail(email);
+    // if (emailError == null) {
+    //   const respose = {
+    //     message: "Invalid Email format!",
+    //     status: false,
+    //   };
+    //   return res.status(401).json(respose);
+    // }
+
+    const salt = await bcrypt.genSaltSync(10); // Key
+    const hashPassword = await bcrypt.hashSync(password, salt);
+
+    const sqlQuery = `INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)`;
+    db.query(
+      sqlQuery,
+      [name, email, phone, hashPassword],
+      function (error, results) {
+        if (error) {
+          return res.status(500).send(error);
+        }
+
+        if (results) {
+          const respose = {
+            message: "Your account has been register successfully!",
+            status: true,
+          };
+
+          return res.json(respose);
+        }
+      }
+    );
+  } catch (error) {
+    const respose = {
+      message: error.message,
+      status: false,
+    };
+    return res.status(401).json(respose);
+  }
 });
 
 // Login API
