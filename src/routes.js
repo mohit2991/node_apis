@@ -109,7 +109,7 @@ router.post("/api/register", async (req, res) => {
 
 // Login API
 router.post("/api/login", async function (req, res) {
-  const { email, password } = req.query;
+  const { email, password } = req.body;
 
   const sqlQuery = `SELECT * FROM users where email='${email}'`;
   db.query(sqlQuery, async (error, results) => {
