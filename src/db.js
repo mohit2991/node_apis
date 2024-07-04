@@ -2,10 +2,10 @@ const mysql = require("mysql2");
 
 // Create DB Connection
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "bookmyshow",
+  host: "db4free.net",
+  user: "nodejsdb_2023",
+  password: "nodejsdb_2023",
+  database: "nodejsdb_2023",
 });
 
 db.connect((err) => {

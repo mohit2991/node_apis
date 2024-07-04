@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
 
 // Register/Signup api
 router.post("/api/register", async (req, res) => {
-  const { name, email, phone, password } = req.query;
+  const { name, email, phone, password } = req.body;
 
   try {
     const schema = joi.object({
@@ -57,6 +57,24 @@ router.post("/api/register", async (req, res) => {
     //   };
     //   return res.status(401).json(respose);
     // }
+
+    db.query(
+      `SELECT * FROM users where email='${email}'`,
+      async (error, results) => {
+        if (error) {
+          return res.status(500).send(error);
+        }
+        if (results) {
+          if (results.length > 0) {
+            const respose = {
+              message: "This email is allready used!",
+              status: false,
+            };
+            return res.status(401).json(respose);
+          }
+        }
+      }
+    );
 
     const salt = await bcrypt.genSaltSync(10); // Key
     const hashPassword = await bcrypt.hashSync(password, salt);
