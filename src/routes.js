@@ -6,6 +6,7 @@ const joi = require("joi");
 
 const db = require("./db");
 const { validateEmail, validateName } = require("../src/utils/validation");
+const verifyToken = require("./utils/verifyToken");
 
 // welcome api
 router.get("/", (req, res) => {
@@ -131,8 +132,9 @@ router.post("/api/login", async function (req, res) {
       const match = await bcrypt.compare(password, hashPassword);
 
       if (match) {
-        const payload = { email: email };
-        const secretKey = "webdevelopment2024";
+        const payload = { email };
+        const secretKey = process.env.SECRET_KEY;
+        console.log(">>>>>>>>>>>>>> mohit secretKey", secretKey);
         const accessToken = await jwt.sign(payload, secretKey);
         const response = {
           token: accessToken,
@@ -148,6 +150,18 @@ router.post("/api/login", async function (req, res) {
         return res.status(401).json(respose);
       }
     }
+  });
+});
+
+router.get("/api/profile", verifyToken, async (req, res) => {
+  const { email } = res.user;
+
+  db.query("SELECT * FROM `user` where email=?", [email], (error, results) => {
+    if (error) {
+      return res.status(500).send(error);
+    }
+
+    return res.json(results);
   });
 });
 
