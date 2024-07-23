@@ -1,4 +1,5 @@
 const mysql = require("mysql");
+const util = require("util");
 
 // Create DB Connection
 const db = mysql.createConnection({
@@ -15,5 +16,7 @@ db.connect((err) => {
   }
   console.log("Connected to databse successfully!");
 });
+
+db.query = util.promisify(db.query);
 
 module.exports = db;
