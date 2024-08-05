@@ -10,6 +10,11 @@ const createUser = async (name, email, phone, password) => {
   await db.query(sqlQuery, [name, email, phone, password]);
 };
 
+const updateUser = async (profile, email) => {
+  const sqlQuery = `UPDATE users SET profile = ? WHERE email = ?`;
+  await db.query(sqlQuery, [profile, email]);
+};
+
 // const db = require("../db");
 
 // const login = async (params) => {
@@ -24,4 +29,4 @@ const createUser = async (name, email, phone, password) => {
 //   }
 // };
 
-module.exports = { getUserByEmail, createUser };
+module.exports = { getUserByEmail, createUser, updateUser };

@@ -1,14 +1,19 @@
 const express = require("express"); // Freamwork
 const bodyParser = require("body-parser"); // Middleware
+const cors = require("cors");
+const path = require("path");
 const app = express();
 
 require("dotenv").config();
 
-const router = require("./src/routes");
+const routes = require("./src/routes");
+const authRoutes = require("./src/routes/authRoutes");
+
+app.use(cors()); // Use this to allow all origins
 
 // Add body parser as middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 
 // Middleware to set CORS headers
 app.use((req, res, next) => {
@@ -22,7 +27,8 @@ app.use((req, res, next) => {
 });
 
 // API Routes or Endpoint
-app.use("/", router);
+app.use(authRoutes);
+app.use(routes);
 
 const port = 8000;
 app.listen(port, () => {

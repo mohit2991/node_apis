@@ -154,9 +154,9 @@ router.post("/api/login", async function (req, res) {
 });
 
 router.get("/api/profile", verifyToken, async (req, res) => {
-  const { email } = res.user;
+  const { email } = req.user;
 
-  db.query("SELECT * FROM `user` where email=?", [email], (error, results) => {
+  db.query("SELECT * FROM `users` where email=?", [email], (error, results) => {
     if (error) {
       return res.status(500).send(error);
     }

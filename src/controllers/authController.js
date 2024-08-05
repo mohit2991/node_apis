@@ -1,7 +1,13 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const joi = require("joi");
-const { getUserByEmail, createUser } = require("../models/UserModel");
+const path = require("path");
+const fs = require("fs");
+const {
+  getUserByEmail,
+  createUser,
+  updateUser,
+} = require("../models/UserModel");
 
 const register = async (req, res) => {
   const { name, email, phone, password } = req.body;
@@ -91,4 +97,35 @@ const register = async (req, res) => {
 //   }
 // };
 
-module.exports = { register };
+const updateProfile = async (req, res) => {
+  const { filename, data } = req.body;
+  const { email } = req.user;
+
+  try {
+    const buffer = Buffer.from(data, "base64");
+    const filePath = path.join(__dirname, "..", "uploads", filename);
+
+    fs.writeFile(filePath, buffer, (err) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Error while updating profile!",
+          status: false,
+        });
+      }
+    });
+
+    await updateUser(filename, email);
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      status: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      status: false,
+    });
+  }
+};
+
+module.exports = { register, updateProfile };
