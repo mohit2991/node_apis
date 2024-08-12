@@ -161,7 +161,11 @@ router.get("/api/profile", verifyToken, async (req, res) => {
       return res.status(500).send(error);
     }
 
-    return res.json(results);
+    const obj = results[0];
+    obj.profile =
+      obj.profile == null ? null : "http://localhost:8000/" + obj.profile;
+
+    return res.json(obj);
   });
 });
 

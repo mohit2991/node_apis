@@ -10,9 +10,14 @@ const createUser = async (name, email, phone, password) => {
   await db.query(sqlQuery, [name, email, phone, password]);
 };
 
-const updateUser = async (profile, email) => {
-  const sqlQuery = `UPDATE users SET profile = ? WHERE email = ?`;
-  await db.query(sqlQuery, [profile, email]);
+const updateUser = async (fullName, profile, email) => {
+  const sqlQuery = `UPDATE users SET name = ? , profile = ? WHERE email = ?`;
+  await db.query(sqlQuery, [fullName, profile, email]);
+};
+
+const updateOtp = async (email, otp) => {
+  const sqlQuery = `UPDATE users SET otp = ? WHERE email = ?`;
+  await db.query(sqlQuery, [otp, email]);
 };
 
 // const db = require("../db");
@@ -29,4 +34,4 @@ const updateUser = async (profile, email) => {
 //   }
 // };
 
-module.exports = { getUserByEmail, createUser, updateUser };
+module.exports = { getUserByEmail, createUser, updateUser, updateOtp };

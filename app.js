@@ -30,6 +30,9 @@ app.use((req, res, next) => {
 app.use(authRoutes);
 app.use(routes);
 
+// Serve static files from the 'public' directory
+app.use("/", express.static(path.join(__dirname, "src", "public")));
+
 const port = 8000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
