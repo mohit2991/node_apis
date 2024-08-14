@@ -163,16 +163,86 @@ const forgotPassword = async (req, res) => {
     await updateOtp(email, otp);
 
     // Send OTP Email
-
-    await transporter.sendMail({
-      from: "mohit@gmail.com",
-      to: email,
+    const emailData = {
+      from: {
+        name: "Book My Show",
+        address: "node@bookmyshow.com",
+      },
+      to: [email],
       subject: "Password Reset OTP",
-      text: `Your otp is ${otp}`,
+      html: `<div style="color:red">Your otp is<b>${otp}</b><div>`,
+      attactments: [
+        {
+          filename: "test.jpg",
+          path: path.join(__dirname, "..", "public", "15849704207951.jpg"),
+          contentType: "image/jpeg/jpg",
+        },
+      ],
+    };
+
+    const sendMail = () => {
+      try {
+        transporter.sendMail(emailData);
+
+        return res.status(200).json({
+          message: `OTP sent to ${email} successfully`,
+          status: true,
+        });
+      } catch (error) {
+        console.log(">>>>>>>> error", error);
+      }
+    };
+
+    sendMail();
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      status: false,
+    });
+  }
+};
+
+const validateOtp = async (req, res) => {
+  const { email, otp, password } = req.body;
+
+  try {
+    const schema = joi.object({
+      email: joi.string().email().required(),
+      otp: joi.string().required(),
+      password: joi.string().required(),
     });
 
+    const validateRespone = schema.validate({ email, otp, password });
+    if (validateRespone.error) {
+      return res.status(500).json({
+        status: false,
+        message: validateRespone.error.details[0].message,
+      });
+    }
+
+    const existingEmail = await getUserByEmail(email);
+    if (existingEmail.length === 0) {
+      return res.status(401).json({
+        message: "Invaild email address!",
+        status: false,
+      });
+    }
+
+    if (otp !== existingEmail[0].otp) {
+      return res.status(401).json({
+        message: "Invalid otp!",
+        status: false,
+      });
+    }
+
+    const salt = await bcrypt.genSaltSync(10); // Key
+    const hashPassword = await bcrypt.hashSync(password, salt);
+
+    // save OTP
+    await updateUser(null, null, email, null, hashPassword);
+
     return res.status(200).json({
-      message: "OTP sent to ${email} successfully",
+      message: `Your password reset successfully`,
       status: true,
     });
   } catch (error) {
@@ -183,4 +253,4 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-module.exports = { register, updateProfile, forgotPassword };
+module.exports = { register, updateProfile, forgotPassword, validateOtp };

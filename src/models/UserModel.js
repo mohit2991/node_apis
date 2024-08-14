@@ -10,9 +10,20 @@ const createUser = async (name, email, phone, password) => {
   await db.query(sqlQuery, [name, email, phone, password]);
 };
 
-const updateUser = async (fullName, profile, email) => {
-  const sqlQuery = `UPDATE users SET name = ? , profile = ? WHERE email = ?`;
-  await db.query(sqlQuery, [fullName, profile, email]);
+const updateUser = async (
+  fullName = null,
+  profile = null,
+  email,
+  otp = null,
+  password = null
+) => {
+  if (password !== null) {
+    const sqlQuery = `UPDATE users SET otp = ? , password = ? WHERE email = ?`;
+    await db.query(sqlQuery, [otp, password, email]);
+  } else {
+    const sqlQuery = `UPDATE users SET name = ? , profile = ? WHERE email = ?`;
+    await db.query(sqlQuery, [fullName, profile, email]);
+  }
 };
 
 const updateOtp = async (email, otp) => {
