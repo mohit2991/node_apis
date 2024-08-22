@@ -9,7 +9,7 @@ const {
   updateUser,
   updateOtp,
 } = require("../models/UserModel");
-const transporter = require("../utils/emailHanddler");
+// const transporter = require("../utils/emailHanddler");
 
 const register = async (req, res) => {
   const { name, email, phone, password } = req.body;
@@ -182,7 +182,7 @@ const forgotPassword = async (req, res) => {
 
     const sendMail = () => {
       try {
-        transporter.sendMail(emailData);
+        // transporter.sendMail(emailData);
 
         return res.status(200).json({
           message: `OTP sent to ${email} successfully`,
