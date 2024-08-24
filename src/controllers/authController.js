@@ -8,6 +8,7 @@ const {
   createUser,
   updateUser,
   updateOtp,
+  getCustomerSupportUserList,
 } = require("../models/UserModel");
 // const transporter = require("../utils/emailHanddler");
 
@@ -253,4 +254,34 @@ const validateOtp = async (req, res) => {
   }
 };
 
-module.exports = { register, updateProfile, forgotPassword, validateOtp };
+const getCustomerCareUserList = async (req, res) => {
+  try {
+    const userList = await getCustomerSupportUserList();
+    if (userList.length === 0) {
+      return res.status(401).json({
+        message: "No customer support active",
+        status: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: `Customer support list!`,
+      status: true,
+      userList: userList,
+    });
+    userList;
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      status: false,
+    });
+  }
+};
+
+module.exports = {
+  register,
+  updateProfile,
+  forgotPassword,
+  validateOtp,
+  getCustomerCareUserList,
+};

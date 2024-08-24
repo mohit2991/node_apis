@@ -31,7 +31,6 @@ const sendMessage = async (req, res) => {
 };
 
 const getMessages = async (req, res) => {
-  const { to_user_id } = req.parames;
   const { email } = req.user;
 
   const existingEmail = await getUserByEmail(email);
@@ -44,9 +43,10 @@ const getMessages = async (req, res) => {
 
   const from_user_id = existingEmail[0].id;
 
-  const messages = await recivedMessages(from_user_id, to_user_id);
+  const messages = await recivedMessages(from_user_id);
 
   return res.status(200).json({
+    userId: from_user_id,
     chatData: messages,
     message: "Chat Data!",
     status: true,

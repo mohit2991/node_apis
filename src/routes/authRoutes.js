@@ -6,6 +6,7 @@ const {
   updateProfile,
   forgotPassword,
   validateOtp,
+  getCustomerCareUserList,
 } = require("../controllers/authController");
 const { sendMessage, getMessages } = require("../controllers/chatController");
 
@@ -15,6 +16,7 @@ router.post("/api/update-profile", verifyToken, updateProfile);
 // router.get("/api/profile", profile);
 router.post("/api/forgot-password", forgotPassword);
 router.post("/api/validate-otp", validateOtp);
+router.get("/api/customer-care-user-list", getCustomerCareUserList);
 
 // Chat Routes
 router.post("/api/send-message", verifyToken, sendMessage);

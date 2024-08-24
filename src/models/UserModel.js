@@ -31,6 +31,11 @@ const updateOtp = async (email, otp) => {
   await db.query(sqlQuery, [otp, email]);
 };
 
+const getCustomerSupportUserList = async () => {
+  const users = db.query(`SELECT id FROM users WHERE role="support"`);
+  return users;
+};
+
 // const db = require("../db");
 
 // const login = async (params) => {
@@ -45,4 +50,10 @@ const updateOtp = async (email, otp) => {
 //   }
 // };
 
-module.exports = { getUserByEmail, createUser, updateUser, updateOtp };
+module.exports = {
+  getUserByEmail,
+  createUser,
+  updateUser,
+  updateOtp,
+  getCustomerSupportUserList,
+};
