@@ -269,7 +269,6 @@ const getCustomerCareUserList = async (req, res) => {
       status: true,
       userList: userList,
     });
-    userList;
   } catch (error) {
     return res.status(500).json({
       message: error.message,

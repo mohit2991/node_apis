@@ -20,6 +20,6 @@ router.get("/api/customer-care-user-list", getCustomerCareUserList);
 
 // Chat Routes
 router.post("/api/send-message", verifyToken, sendMessage);
-router.get("/api/get-messages", verifyToken, getMessages);
+router.post("/api/get-messages", verifyToken, getMessages);
 
 module.exports = router;

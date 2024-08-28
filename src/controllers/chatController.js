@@ -1,4 +1,8 @@
-const { addMessage, recivedMessages } = require("../models/ChatModel");
+const {
+  addMessage,
+  customerRecivedMessages,
+  supportRecivedMessages,
+} = require("../models/ChatModel");
 const { getUserByEmail } = require("../models/UserModel");
 
 const sendMessage = async (req, res) => {
@@ -31,6 +35,7 @@ const sendMessage = async (req, res) => {
 };
 
 const getMessages = async (req, res) => {
+  const { to_user_id } = req.body;
   const { email } = req.user;
 
   const existingEmail = await getUserByEmail(email);
@@ -43,7 +48,13 @@ const getMessages = async (req, res) => {
 
   const from_user_id = existingEmail[0].id;
 
-  const messages = await recivedMessages(from_user_id);
+  let messages = [];
+
+  if (to_user_id === null) {
+    messages = await customerRecivedMessages(from_user_id, from_user_id);
+  } else {
+    messages = await supportRecivedMessages(from_user_id, to_user_id);
+  }
 
   return res.status(200).json({
     userId: from_user_id,

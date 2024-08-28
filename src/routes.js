@@ -134,9 +134,9 @@ router.post("/api/login", async function (req, res) {
       if (match) {
         const payload = { email };
         const secretKey = process.env.SECRET_KEY;
-        console.log(">>>>>>>>>>>>>> mohit secretKey", secretKey);
         const accessToken = await jwt.sign(payload, secretKey);
         const response = {
+          role: results[0].role,
           token: accessToken,
           message: "Login Successfully!",
           status: true,
